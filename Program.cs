@@ -1,8 +1,5 @@
 using AuthProject.Data;
-using AuthProject.Helpers;
-using AuthProject.Interfaces;
 using AuthProject.Models;
-using AuthProject.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,14 +10,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(e =>
     e.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<ISendGridEmail, SendGridEmail>();
-builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSection("SendGrid"));
 builder.Services.Configure<IdentityOptions>(opt =>
 {
     opt.Password.RequiredLength = 5;
     opt.Password.RequireLowercase = true;
-    opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
-    opt.Lockout.MaxFailedAccessAttempts = 5;
+    //opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(10);
+    //opt.Lockout.MaxFailedAccessAttempts = 5;
     //opt.SignIn.RequireConfirmedAccount = true;
 });
 

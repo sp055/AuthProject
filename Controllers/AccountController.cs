@@ -1,5 +1,4 @@
-﻿using AuthProject.Interfaces;
-using AuthProject.Models;
+﻿using AuthProject.Models;
 using AuthProject.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +16,13 @@ namespace AuthProject.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ISendGridEmail _sendGridEmail;
         private string _login;
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            ISendGridEmail sendGridEmail, RoleManager<IdentityRole> roleManager)
+             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _sendGridEmail = sendGridEmail;
             _roleManager = roleManager;
         }
         public IActionResult Index()
@@ -45,25 +42,6 @@ namespace AuthProject.Controllers
         public IActionResult ForgotPassword()
         {
             return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null)
-                {
-                    return RedirectToAction("ForgotPasswordConfirmation");
-                }
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackurl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-
-                await _sendGridEmail.SendEmailAsync(model.Email, "Reset Email Confitmation", "Please reset email by going to this link <a href=\"" + callbackurl + "\">link</a>");
-                return RedirectToAction("ForgotPasswordConfirmation");
-            }
-            return View(model);
         }
 
 
@@ -161,39 +139,39 @@ namespace AuthProject.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult Edit()
-        {
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult Edit()
+        //{
+        //    return View();
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(EditViewModel editViewModel, string? returnUrl = null)
-        {
-            editViewModel.ReturnUrl = returnUrl;
-            returnUrl = returnUrl ?? Url.Content("~/");
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(EditViewModel editViewModel, string? returnUrl = null)
+        //{
+        //    editViewModel.ReturnUrl = returnUrl;
+        //    returnUrl = returnUrl ?? Url.Content("~/");
 
-            if (!ModelState.IsValid)
-            {
-                return View(editViewModel);
-            }
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(editViewModel);
+        //    }
 
-            //var test = _userManager.FindByIdAsync(User.Identity.GetUserId());
+        //    //var test = _userManager.FindByIdAsync(User.Identity.GetUserId());
 
-            //NIEWYTRZYMIE
-            //string UserEmail = await _userManager.GetEmailAsync(User.Identity.);
-            var user = await _userManager.FindByNameAsync(_login);
-            if (user != null)
-            {
-                //var newUser = new AppUser() {};
-                //var updateUser = await _userManager.UpdateAsync(user, editViewModel.NewPassword);
+        //    //NIEWYTRZYMIE
+        //    //string UserEmail = await _userManager.GetEmailAsync(User.Identity.);
+        //    var user = await _userManager.FindByNameAsync(_login);
+        //    if (user != null)
+        //    {
+        //        //var newUser = new AppUser() {};
+        //        //var updateUser = await _userManager.UpdateAsync(user, editViewModel.NewPassword);
 
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                 await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
-            }
+        //        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        //         await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
+        //    }
 
-            return View(editViewModel);
-        }
+        //    return View(editViewModel);
     }
-}
+    }
+
