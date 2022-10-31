@@ -31,6 +31,19 @@
                         <div class="text-center">
                             <a asp-action="Edit" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Edit</a>
                             <a asp-action="ChangePasswd" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Change password</a>
+
+                            @if (item.LockoutEnabled)
+                            {
+                                <a asp-action="LockAccount" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Lock</a>
+                            }
+                            else
+                            {
+                                <a asp-action="UnlockAccount" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Unlock</a>
+                            }
+
+                            <a asp-action="DeleteAccount" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Delete</a>
+
+
                         </div>
                     </td>
                 </tr>

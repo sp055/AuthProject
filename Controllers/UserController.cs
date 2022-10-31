@@ -143,5 +143,49 @@ namespace IdentityAppCourse2022.Controllers
 
             return View(changePasswdAdminViewModel);
         }
+
+        public IActionResult LockAccount(string userId) //TODO nie dizała ale idk dlaczego nie, już mi się niechce ide zaraz spać, ten lock account to chyba nie blokuje konta XD
+        {
+            var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.LockoutEnabled = false;
+            _userManager.UpdateAsync(user);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index", "User");
+        }
+        
+        public IActionResult UnlockAccount(string userId)
+        {
+            var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.LockoutEnabled = true;
+            _userManager.UpdateAsync(user);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index", "User");
+        } 
+        
+        public IActionResult DeleteAccount(string userId)
+        {
+            var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _db.Remove(user);
+            _db.SaveChanges();
+            
+            return RedirectToAction("Index", "User");
+        }
     }
 }
