@@ -4,8 +4,10 @@ using AuthProject.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 
 namespace AuthProject.Controllers
@@ -16,6 +18,7 @@ namespace AuthProject.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ISendGridEmail _sendGridEmail;
+        private string _login;
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
             ISendGridEmail sendGridEmail, RoleManager<IdentityRole> roleManager)
@@ -73,6 +76,7 @@ namespace AuthProject.Controllers
                 var result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password, logInViewModel.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
+                    _login = logInViewModel.UserName;
                     return RedirectToAction("Index", "Home");
                 }
                 if (result.IsLockedOut)
@@ -157,6 +161,12 @@ namespace AuthProject.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Edit()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditViewModel editViewModel, string? returnUrl = null)
@@ -168,14 +178,19 @@ namespace AuthProject.Controllers
             {
                 return View(editViewModel);
             }
-            var user = await _userManager.FindByEmailAsync(editViewModel.Email);
+
+            //var test = _userManager.FindByIdAsync(User.Identity.GetUserId());
+
+            //NIEWYTRZYMIE
+            //string UserEmail = await _userManager.GetEmailAsync(User.Identity.);
+            var user = await _userManager.FindByNameAsync(_login);
             if (user != null)
             {
                 //var newUser = new AppUser() {};
                 //var updateUser = await _userManager.UpdateAsync(user, editViewModel.NewPassword);
 
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var result = await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
+                 await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
             }
 
             return View(editViewModel);

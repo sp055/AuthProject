@@ -8,7 +8,7 @@ namespace AuthProject.ViewModels
     {
 
         
-        public string? Email { get; set; }
+        //public string? Email { get; set; }
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Old Password")]
@@ -19,10 +19,10 @@ namespace AuthProject.ViewModels
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         public string? NewPassword { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string? ConfirmNewPassword { get; set; }
+        //[DataType(DataType.Password)]
+        //[Display(Name = "Confirm password")]
+        //[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        //public string? ConfirmNewPassword { get; set; }
         public string? ReturnUrl { get; set; }
     }
 }
