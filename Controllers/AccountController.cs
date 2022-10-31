@@ -1,13 +1,9 @@
-﻿using AuthProject.Models;
+﻿using System.Security.Claims;
+using AuthProject.Models;
 using AuthProject.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Principal;
-using System.Text.RegularExpressions;
 
 namespace AuthProject.Controllers
 {
@@ -16,19 +12,18 @@ namespace AuthProject.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private string _login;
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-             RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+        // public IActionResult Index()
+        // {
+        //     return View();
+        // }
 
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
@@ -38,12 +33,11 @@ namespace AuthProject.Controllers
             return View(logInViewModel);
         }
 
-        [HttpGet]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
-
+        // [HttpGet]
+        // public IActionResult ForgotPassword()
+        // {
+        //     return View();
+        // }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -51,15 +45,16 @@ namespace AuthProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password, logInViewModel.RememberMe, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password,
+                    logInViewModel.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    _login = logInViewModel.UserName;
                     return RedirectToAction("Index", "Home");
                 }
+
                 if (result.IsLockedOut)
                 {
-                    return View("Lockout");
+                    return View();
                 }
                 else
                 {
@@ -67,6 +62,7 @@ namespace AuthProject.Controllers
                     return View(logInViewModel);
                 }
             }
+
             return View(logInViewModel);
         }
 
@@ -78,6 +74,7 @@ namespace AuthProject.Controllers
                 await _roleManager.CreateAsync(new IdentityRole("User"));
                 await _roleManager.CreateAsync(new IdentityRole("ADMIN"));
             }
+
             List<SelectListItem> listItems = new List<SelectListItem>();
             listItems.Add(new SelectListItem()
             {
@@ -107,7 +104,8 @@ namespace AuthProject.Controllers
 
                 if (result.Succeeded)
                 {
-                    if (registerViewModel.RoleSelected != null && registerViewModel.RoleSelected.Length > 0 && registerViewModel.RoleSelected == "ADMIN")
+                    if (registerViewModel.RoleSelected != null && registerViewModel.RoleSelected.Length > 0 &&
+                        registerViewModel.RoleSelected == "ADMIN")
                     {
                         await _userManager.AddToRoleAsync(user, "ADMIN");
                     }
@@ -115,13 +113,15 @@ namespace AuthProject.Controllers
                     {
                         await _userManager.AddToRoleAsync(user, "User");
                     }
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }
+
                 ModelState.AddModelError("Password", "User could not be created. Password not unique enough");
             }
-            return View(registerViewModel);
 
+            return View(registerViewModel);
         }
 
         [HttpPost]
@@ -133,45 +133,45 @@ namespace AuthProject.Controllers
         }
 
 
+        // [HttpGet]
+        // public IActionResult ForgotPasswordConfirmation()
+        // {
+        //     return View();
+        // }
+
         [HttpGet]
-        public IActionResult ForgotPasswordConfirmation()
+        public IActionResult Edit()
         {
             return View();
         }
 
-        //[HttpGet]
-        //public IActionResult Edit()
-        //{
-        //    return View();
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditViewModel editViewModel, string? returnUrl = null)
+        {
+            editViewModel.ReturnUrl = returnUrl;
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(EditViewModel editViewModel, string? returnUrl = null)
-        //{
-        //    editViewModel.ReturnUrl = returnUrl;
-        //    returnUrl = returnUrl ?? Url.Content("~/");
+            if (!ModelState.IsValid)
+            {
+                return View(editViewModel);
+            }
 
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(editViewModel);
-        //    }
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claimsEmail = claimsIdentity.FindFirst(ClaimTypes.Email).Value;
 
-        //    //var test = _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var user = await _userManager.FindByNameAsync(claimsEmail);
+            if (user != null)
+            {
+                var result = await _signInManager.CheckPasswordSignInAsync(user, editViewModel.OldPassword, false);
+                if (result.Succeeded)
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
+                    return RedirectToAction("Index", "Home");
+                }
+            }
 
-        //    //NIEWYTRZYMIE
-        //    //string UserEmail = await _userManager.GetEmailAsync(User.Identity.);
-        //    var user = await _userManager.FindByNameAsync(_login);
-        //    if (user != null)
-        //    {
-        //        //var newUser = new AppUser() {};
-        //        //var updateUser = await _userManager.UpdateAsync(user, editViewModel.NewPassword);
-
-        //        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        //         await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
-        //    }
-
-        //    return View(editViewModel);
+            return View(editViewModel);
+        }
     }
-    }
-
+}
