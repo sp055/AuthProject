@@ -13,5 +13,6 @@ namespace AuthProject.ViewModels
 
         public bool RememberMe { get; set; }
         public string? ReturnUrl { get; set; }
+        public bool? FirstLogin { get; set; } = true;
     }
 }

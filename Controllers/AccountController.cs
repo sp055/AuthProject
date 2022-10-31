@@ -49,7 +49,16 @@ namespace AuthProject.Controllers
                     logInViewModel.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    var user = await _userManager.FindByNameAsync(logInViewModel.UserName);
+
+                    if (user.FirstLogin)
+                    {
+                        return RedirectToAction("Edit", "Account");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
 
                 if (result.IsLockedOut)
@@ -115,7 +124,8 @@ namespace AuthProject.Controllers
                     }
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
+
+                    return RedirectToAction("Edit", "Account");
                 }
 
                 ModelState.AddModelError("Password", "User could not be created. Password not unique enough");
@@ -159,12 +169,22 @@ namespace AuthProject.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claimsEmail = claimsIdentity.FindFirst(ClaimTypes.Email).Value;
 
-            var user = await _userManager.FindByNameAsync(claimsEmail);
+            var user = await _userManager.FindByEmailAsync(claimsEmail);
             if (user != null)
             {
                 var result = await _signInManager.CheckPasswordSignInAsync(user, editViewModel.OldPassword, false);
                 if (result.Succeeded)
                 {
+                    var updatedUser = new AppUser
+                    {
+                        RoleId = user.RoleId,
+                        Role = user.Role,
+                        RoleList = user.RoleList,
+                        FirstLogin = false
+                    };
+
+                    _userManager.UpdateAsync(updatedUser);
+
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                     await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
                     return RedirectToAction("Index", "Home");
