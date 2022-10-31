@@ -1,0 +1,52 @@
+﻿@using AuthProject.ViewModels
+@model EditViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+@if (User.Identity.IsAuthenticated)
+{
+    @if (User.IsInRole("User"))
+    {
+        <h2>Your role is user</h2>
+    }
+    else
+    {
+        <h2>Your role is ADMIN</h2>
+        <form asp-controller="Account" asp-action="Edit" method="post" role="form">
+            <input hidden asp-for="Email" />
+            <div class="form-group">
+                <label asp-for="OldPassword" class="col-md-2"></label>
+                <div class="col-md-10">
+                    <input asp-for="OldPassword" class="form-control" />
+                    <span asp-validation-for="OldPassword" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewPassword" class="col-md-2"></label>
+                <div class="col-md-10">
+                    <input asp-for="NewPassword" class="form-control" />
+                    <span asp-validation-for="NewPassword" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmNewPassword" class="col-md-2"></label>
+                <div class="col-md-10">
+                    <input asp-for="ConfirmNewPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="offset-md-2 col-md-10">
+                    <button type="submit" class="btn btn-success">Edit</button>
+                </div>
+            </div>
+        </form>
+    }
+}
+
