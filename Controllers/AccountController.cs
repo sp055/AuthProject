@@ -169,7 +169,7 @@ namespace AuthProject.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claimsEmail = claimsIdentity.FindFirst(ClaimTypes.Email).Value;
 
-            var user = await _userManager.FindByNameAsync(claimsEmail);
+            var user = await _userManager.FindByEmailAsync(claimsEmail);
             if (user != null)
             {
                 var result = await _signInManager.CheckPasswordSignInAsync(user, editViewModel.OldPassword, false);
