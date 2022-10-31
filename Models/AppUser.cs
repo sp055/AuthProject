@@ -12,5 +12,7 @@ namespace AuthProject.Models
         public string? Role { get; set; }
         [NotMapped]
         public IEnumerable<SelectListItem>? RoleList { get; set; }
+        [NotMapped]
+        public bool FirstLogin { get; set; } = true;
     }
 }
