@@ -32,7 +32,7 @@
                             <a asp-action="Edit" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Edit</a>
                             <a asp-action="ChangePasswd" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Change password</a>
 
-                            @if (item.LockoutEnabled)
+                            @if (item.LockoutEnd == null)
                             {
                                 <a asp-action="LockAccount" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Lock</a>
                             }

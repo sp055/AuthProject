@@ -151,9 +151,9 @@ namespace IdentityAppCourse2022.Controllers
             {
                 return NotFound();
             }
-
-            _userManager.SetLockoutEnabledAsync(user, true);
-            _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddDays(4));
+            
+            _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddYears(100));
+            _db.SaveChanges();
 
             return RedirectToAction("Index", "User");
         }
@@ -165,9 +165,8 @@ namespace IdentityAppCourse2022.Controllers
             {
                 return NotFound();
             }
-
-            user.LockoutEnabled = true;
-            _userManager.UpdateAsync(user);
+            
+            _userManager.SetLockoutEndDateAsync(user, null);
             _db.SaveChanges();
 
             return RedirectToAction("Index", "User");
