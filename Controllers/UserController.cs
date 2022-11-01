@@ -192,6 +192,30 @@ namespace IdentityAppCourse2022.Controllers
             _db.SaveChanges();
             
             return RedirectToAction("Index", "User");
+        }        
+        
+        [Authorize(Roles = "ADMIN")]
+        public IActionResult TogglePasswordCheck()
+        {
+            return View();
+        }     
+        
+        [Authorize(Roles = "ADMIN")]
+        public IActionResult PasswordCheckOff()
+        {
+            TogglePasswordCheckViewModel.PasswordCheck = false;
+            _db.SaveChanges();
+            
+            return RedirectToAction("TogglePasswordCheck", "User");
+        }   
+        
+        [Authorize(Roles = "ADMIN")]
+        public IActionResult PasswordCheckOn()
+        {
+            TogglePasswordCheckViewModel.PasswordCheck = true;
+            _db.SaveChanges();
+            
+            return RedirectToAction("TogglePasswordCheck", "User");
         }
     }
 }

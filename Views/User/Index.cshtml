@@ -42,12 +42,12 @@
                             }
 
                             <a asp-action="DeleteAccount" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Delete</a>
-
-
                         </div>
                     </td>
                 </tr>
             }
+
+            <a asp-action="TogglePasswordCheck" asp-controller="User" class="btn btn-info text-white">TogglePasswordCheck</a>
         </table>
     }
 </div>
