@@ -152,9 +152,8 @@ namespace IdentityAppCourse2022.Controllers
                 return NotFound();
             }
 
-            user.LockoutEnabled = false;
-            _userManager.UpdateAsync(user);
-            _db.SaveChanges();
+            _userManager.SetLockoutEnabledAsync(user, true);
+            _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddDays(4));
 
             return RedirectToAction("Index", "User");
         }
