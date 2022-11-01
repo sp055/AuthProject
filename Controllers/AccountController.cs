@@ -183,8 +183,8 @@ namespace AuthProject.Controllers
                         FirstLogin = false
                     };
 
-                    _userManager.UpdateAsync(updatedUser);
-
+                    await _userManager.UpdateAsync(updatedUser);
+                    
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                     await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
                     return RedirectToAction("Index", "Home");

@@ -15,6 +15,6 @@ namespace AuthProject.Models
         [NotMapped]
         public bool FirstLogin { get; set; } = true;
         [NotMapped]
-        public string Password { get; set; }
+        public string? Password { get; set; }
     }
 }
