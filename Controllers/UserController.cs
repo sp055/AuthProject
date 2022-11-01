@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IdentityAppCourse2022.Controllers
 {
@@ -42,6 +43,7 @@ namespace IdentityAppCourse2022.Controllers
             return View(userList);
         }
 
+        [Authorize(Roles = "ADMIN")]
         public IActionResult Edit(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
@@ -68,6 +70,7 @@ namespace IdentityAppCourse2022.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Edit(AppUser user)
         {
             if (ModelState.IsValid)
@@ -100,6 +103,7 @@ namespace IdentityAppCourse2022.Controllers
             return View(user);
         }
 
+        [Authorize(Roles = "ADMIN")]
         public IActionResult ChangePasswd(string userId) //TODO name refactor
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
@@ -126,6 +130,7 @@ namespace IdentityAppCourse2022.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ChangePasswd(AppUser changePasswdAdminViewModel)
         {
             if (!ModelState.IsValid)
@@ -144,7 +149,8 @@ namespace IdentityAppCourse2022.Controllers
             return View(changePasswdAdminViewModel);
         }
 
-        public IActionResult LockAccount(string userId) //TODO nie dizała ale idk dlaczego nie, już mi się niechce ide zaraz spać, ten lock account to chyba nie blokuje konta XD
+        [Authorize(Roles = "ADMIN")]
+        public IActionResult LockAccount(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
             if (user == null)
@@ -158,6 +164,7 @@ namespace IdentityAppCourse2022.Controllers
             return RedirectToAction("Index", "User");
         }
         
+        [Authorize(Roles = "ADMIN")]
         public IActionResult UnlockAccount(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
@@ -172,6 +179,7 @@ namespace IdentityAppCourse2022.Controllers
             return RedirectToAction("Index", "User");
         } 
         
+        [Authorize(Roles = "ADMIN")]
         public IActionResult DeleteAccount(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);

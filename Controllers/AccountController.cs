@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using AuthProject.Models;
 using AuthProject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -76,6 +77,7 @@ namespace AuthProject.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Register(string? returnUrl = null)
         {
             if (!await _roleManager.RoleExistsAsync("User"))
@@ -102,6 +104,7 @@ namespace AuthProject.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel, string? returnUrl = null)
         {
             registerViewModel.ReturnUrl = returnUrl;
@@ -136,6 +139,7 @@ namespace AuthProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMIN,User")]
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
@@ -150,6 +154,7 @@ namespace AuthProject.Controllers
         // }
 
         [HttpGet]
+        [Authorize(Roles = "ADMIN,User")]
         public IActionResult Edit()
         {
             return View();
@@ -157,6 +162,7 @@ namespace AuthProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMIN,User")]
         public async Task<IActionResult> Edit(EditViewModel editViewModel, string? returnUrl = null)
         {
             editViewModel.ReturnUrl = returnUrl;
