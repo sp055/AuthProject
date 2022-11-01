@@ -41,6 +41,12 @@ namespace AuthProject.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("FirstLogin")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastPasswChange")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AuthProject.Data;
 using AuthProject.Models;
 using AuthProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,13 +14,15 @@ namespace AuthProject.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _db;
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _db = db;
         }
         // public IActionResult Index()
         // {
@@ -111,7 +114,12 @@ namespace AuthProject.Controllers
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new AppUser { Email = registerViewModel.Email, UserName = registerViewModel.UserName };
+                var user = new AppUser
+                {
+                    Email = registerViewModel.Email, UserName = registerViewModel.UserName,
+                    LastPasswChange = DateTime.Now
+                };
+                
                 var result = await _userManager.CreateAsync(user, registerViewModel.Password);
 
                 if (result.Succeeded)
@@ -126,9 +134,9 @@ namespace AuthProject.Controllers
                         await _userManager.AddToRoleAsync(user, "User");
                     }
 
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    //await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    return RedirectToAction("Edit", "Account");
+                    return RedirectToAction("Index", "User");
                 }
 
                 ModelState.AddModelError("Password", "User could not be created. Password not unique enough");
@@ -186,11 +194,13 @@ namespace AuthProject.Controllers
                         RoleId = user.RoleId,
                         Role = user.Role,
                         RoleList = user.RoleList,
-                        FirstLogin = false
+                        FirstLogin = false,
+                        LastPasswChange = DateTime.Now
                     };
 
                     await _userManager.UpdateAsync(updatedUser);
-                    
+                    _db.SaveChanges();
+
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                     await _userManager.ResetPasswordAsync(user, token, editViewModel.NewPassword);
                     return RedirectToAction("Index", "Home");

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
-namespace IdentityAppCourse2022.Controllers
+namespace AuthProject.Controllers
 {
     public class UserController : Controller
     {
@@ -142,7 +142,7 @@ namespace IdentityAppCourse2022.Controllers
             if (user != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                await _userManager.ResetPasswordAsync(user, token, changePasswdAdminViewModel.Password);
+                await _userManager.ResetPasswordAsync(user, token, changePasswdAdminViewModel.PasswordAm);
                 return RedirectToAction("Index", "Home");
             }
 
@@ -157,13 +157,13 @@ namespace IdentityAppCourse2022.Controllers
             {
                 return NotFound();
             }
-            
+
             _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddYears(100));
             _db.SaveChanges();
 
             return RedirectToAction("Index", "User");
         }
-        
+
         [Authorize(Roles = "ADMIN")]
         public IActionResult UnlockAccount(string userId)
         {
@@ -172,13 +172,13 @@ namespace IdentityAppCourse2022.Controllers
             {
                 return NotFound();
             }
-            
+
             _userManager.SetLockoutEndDateAsync(user, null);
             _db.SaveChanges();
 
             return RedirectToAction("Index", "User");
-        } 
-        
+        }
+
         [Authorize(Roles = "ADMIN")]
         public IActionResult DeleteAccount(string userId)
         {
@@ -190,31 +190,31 @@ namespace IdentityAppCourse2022.Controllers
 
             _db.Remove(user);
             _db.SaveChanges();
-            
+
             return RedirectToAction("Index", "User");
-        }        
-        
+        }
+
         [Authorize(Roles = "ADMIN")]
         public IActionResult TogglePasswordCheck()
         {
             return View();
-        }     
-        
+        }
+
         [Authorize(Roles = "ADMIN")]
         public IActionResult PasswordCheckOff()
         {
             TogglePasswordCheckViewModel.PasswordCheck = false;
             _db.SaveChanges();
-            
+
             return RedirectToAction("TogglePasswordCheck", "User");
-        }   
-        
+        }
+
         [Authorize(Roles = "ADMIN")]
         public IActionResult PasswordCheckOn()
         {
             TogglePasswordCheckViewModel.PasswordCheck = true;
             _db.SaveChanges();
-            
+
             return RedirectToAction("TogglePasswordCheck", "User");
         }
     }
