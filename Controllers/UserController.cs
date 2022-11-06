@@ -150,7 +150,7 @@ namespace AuthProject.Controllers
         }
 
         [Authorize(Roles = "ADMIN")]
-        public IActionResult LockAccount(string userId)
+        public async Task<IActionResult> LockAccount(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
             if (user == null)
@@ -158,14 +158,14 @@ namespace AuthProject.Controllers
                 return NotFound();
             }
 
-            _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddYears(100));
+            await _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddYears(100));
             _db.SaveChanges();
 
             return RedirectToAction("Index", "User");
         }
 
         [Authorize(Roles = "ADMIN")]
-        public IActionResult UnlockAccount(string userId)
+        public async Task<IActionResult> UnlockAccount(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
             if (user == null)
@@ -173,7 +173,7 @@ namespace AuthProject.Controllers
                 return NotFound();
             }
 
-            _userManager.SetLockoutEndDateAsync(user, null);
+            await _userManager.SetLockoutEndDateAsync(user, null);
             _db.SaveChanges();
 
             return RedirectToAction("Index", "User");

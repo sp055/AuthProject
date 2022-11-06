@@ -25,6 +25,12 @@ namespace AuthProject.Data
 
             builder.Entity<AppUser>()
                 .Ignore(p => p.RoleList);
+            builder.Entity<AppUser>()
+                .Ignore(p => p.FirstLogin);
+            builder.Entity<AppUser>()
+                .Ignore(p => p.PasswordAm);
+            builder.Entity<AppUser>()
+                .Ignore(p => p.LastPasswChange);
         }
     }
 }
