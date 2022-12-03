@@ -188,13 +188,6 @@ namespace AuthProject.Controllers
                 {
                     user.FirstLogin = false;
                     user.LastPasswChange = DateTime.Now;
-                    //{
-                    //    //RoleId = user.RoleId,
-                    //    //Role = user.Role,
-                    //    //RoleList = user.RoleList,
-                       
-                        
-                    //};
 
                     await _userManager.UpdateAsync(user);
                     _db.SaveChanges();
