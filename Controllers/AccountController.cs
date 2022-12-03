@@ -15,6 +15,7 @@ namespace AuthProject.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _db;
+        private double OTP;
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
             RoleManager<IdentityRole> roleManager, ApplicationDbContext db)
@@ -34,6 +35,8 @@ namespace AuthProject.Controllers
         {
             LogInViewModel logInViewModel = new LogInViewModel();
             logInViewModel.ReturnUrl = returnUrl ?? Url.Content("~/");
+            OTP = Math.Round(new Random().NextDouble() * 100, 1);
+            logInViewModel.OTP = OTP;
             return View(logInViewModel);
         }
 
@@ -49,8 +52,17 @@ namespace AuthProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password,
+                //Math.Round(a * Math.Sin(x), 1)
+                var lenght = logInViewModel.UserName.Length;
+                var resultOTP = Math.Round(lenght * Math.Sin(logInViewModel.OTP),1);
+                Microsoft.AspNetCore.Identity.SignInResult result = Microsoft.AspNetCore.Identity.SignInResult.Failed;
+                if (resultOTP==logInViewModel.OTPResult)
+                {
+                    result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password,
                     logInViewModel.RememberMe, lockoutOnFailure: true);
+                }
+
+
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(logInViewModel.UserName);
@@ -112,11 +124,12 @@ namespace AuthProject.Controllers
             {
                 var user = new AppUser
                 {
-                    Email = registerViewModel.Email, UserName = registerViewModel.UserName,
+                    Email = registerViewModel.Email,
+                    UserName = registerViewModel.UserName,
                     LastPasswChange = DateTime.Now,
                     FirstLogin = true
                 };
-                
+
                 var result = await _userManager.CreateAsync(user, registerViewModel.Password);
 
                 if (result.Succeeded)
