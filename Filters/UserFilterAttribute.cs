@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using AuthProject.Data;
 using AuthProject.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 
@@ -8,11 +9,12 @@ namespace AuthProject.Filters
 {
     public class UserFilterAttribute : IActionFilter
     {
-        private readonly ApplicationDbContext context;
+        private readonly ApplicationDbContext _context;
+
 
         public UserFilterAttribute(ApplicationDbContext context)
         {
-            this.context = context;
+            _context = context;
         }
         public void OnActionExecuted(ActionExecutedContext context)
         {
@@ -29,6 +31,9 @@ namespace AuthProject.Filters
 
             var url = $"{controller}/{action}";
 
+            var method = context.HttpContext.Request.Method;
+            var methodType = context.ActionDescriptor.DisplayName;
+
             if (!string.IsNullOrEmpty(context.HttpContext.Request.QueryString.Value))
             {
                 data = context.HttpContext.Request.QueryString.Value;
@@ -39,33 +44,36 @@ namespace AuthProject.Filters
 
                 var value = arguments.FirstOrDefault().Value;
 
+
+
                 var convertedValue = JsonConvert.SerializeObject(value);
                 data = convertedValue;
             }
-
+            
             var user = context.HttpContext.User.Identity.Name;
 
             if (user != null)
             {
                 var ipAddress = context.HttpContext.Connection.RemoteIpAddress.ToString();
 
-                SaveUserActivity(data, url, user, ipAddress);
+                SaveUserActivity(data, url, user, method, ipAddress);
             }
             
         }
 
-        public void SaveUserActivity(string data, string url, string user, string ipAddress)
+        public void SaveUserActivity(string data, string url, string user, string method, string ipAddress)
         {
             var userActivity = new UserActivity
             {
                 Data = data,
                 Url = url,
                 UserName = user,
-                IpAddress = ipAddress
+                IpAddress = ipAddress,
+                MethodType = method,
             };
 
-            context.UserActivities.Add(userActivity);
-            context.SaveChanges();
+            _context.UserActivities.Add(userActivity);
+            _context.SaveChanges();
         }
     }
 }
