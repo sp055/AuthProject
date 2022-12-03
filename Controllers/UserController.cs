@@ -217,5 +217,8 @@ namespace AuthProject.Controllers
 
             return RedirectToAction("TogglePasswordCheck", "User");
         }
+
+
+
     }
 }

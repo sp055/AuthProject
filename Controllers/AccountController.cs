@@ -13,15 +13,15 @@ namespace AuthProject.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _db;
 
+        private double OTP = new Random().NextDouble();
+
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            RoleManager<IdentityRole> roleManager, ApplicationDbContext db)
+             ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
             _db = db;
         }
         // public IActionResult Index()
@@ -112,11 +112,12 @@ namespace AuthProject.Controllers
             {
                 var user = new AppUser
                 {
-                    Email = registerViewModel.Email, UserName = registerViewModel.UserName,
+                    Email = registerViewModel.Email,
+                    UserName = registerViewModel.UserName,
                     LastPasswChange = DateTime.Now,
                     FirstLogin = true
                 };
-                
+
                 var result = await _userManager.CreateAsync(user, registerViewModel.Password);
 
                 if (result.Succeeded)
@@ -199,6 +200,28 @@ namespace AuthProject.Controllers
             }
 
             return View(editViewModel);
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult UserActivity()
+        {
+            var userActivity = _db.UserActivities;
+            List<UserActivityVM> uaVM = new List<UserActivityVM>();
+            foreach (var item in userActivity)
+            {
+                var temp = new UserActivityVM();
+                temp.UserName = item.UserName;
+                temp.Url = item.Url;
+                temp.Data = item.Data;
+                temp.IpAddress = item.IpAddress;
+                temp.MethodType = item.MethodType;
+                temp.ActivityDate = item.ActivityDate;
+
+                uaVM.Add(temp);
+            }
+
+            return View(uaVM);
         }
     }
 }

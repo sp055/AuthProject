@@ -1,0 +1,35 @@
+﻿@using AuthProject.ViewModels;
+@model IEnumerable<UserActivityVM>
+@{
+    int rowNumber = 0;
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Url</th>
+            <th>Data</th>
+            <th>UserName</th>
+            <th>IpAddress</th>
+            <th>MethodType</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <th>@(rowNumber += 1)</th>
+
+            <td>@item.Url</td>
+            <td>@item.Data</td>
+            <td>@item.UserName</td>
+            <td>@item.IpAddress</td>
+            <td>@item.MethodType</td>
+            <td>@item.ActivityDate</td>
+        </tr>
+        }
+        @*Przygotować paginacje dla listy*@
+    </tbody>
+</table>

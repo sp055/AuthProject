@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using AuthProject.Data;
 using AuthProject.Models;
+using AuthProject.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
@@ -33,32 +34,45 @@ namespace AuthProject.Filters
 
             var method = context.HttpContext.Request.Method;
             var methodType = context.ActionDescriptor.DisplayName;
-
-            if (!string.IsNullOrEmpty(context.HttpContext.Request.QueryString.Value))
+            LogInViewModel? userVM;
+            string? userName;
+            var userContext = context.HttpContext.User.Identity.Name;
+            if (method != "GET")
             {
-                data = context.HttpContext.Request.QueryString.Value;
+                if (!string.IsNullOrEmpty(context.HttpContext.Request.QueryString.Value))
+                {
+                    data = context.HttpContext.Request.QueryString.Value;
+                }
+                else
+                {
+                    var arguments = context.ActionArguments;
+
+                    var value = arguments.FirstOrDefault().Value;
+
+                    if (value != null)
+                    {
+                        var convertedValue = JsonConvert.SerializeObject(value);
+                        data = convertedValue;
+                        if (value is LogInViewModel)
+                        {
+                            userVM = (LogInViewModel)value;
+                            userName = userVM.UserName;
+                            data = $@"[{{'UserName': {userName} }}]";
+                            var userDB = _context.AppUser.FirstOrDefault(x => x.UserName == userName);
+                            userContext = userDB.UserName;
+                        }
+                    }
+                }
+
+
+
+                if (userContext != null)
+                {
+                    var ipAddress = context.HttpContext.Connection.RemoteIpAddress.ToString();
+
+                    SaveUserActivity(data, url, userContext, method, ipAddress);
+                }
             }
-            else
-            {
-                var arguments = context.ActionArguments;
-
-                var value = arguments.FirstOrDefault().Value;
-
-
-
-                var convertedValue = JsonConvert.SerializeObject(value);
-                data = convertedValue;
-            }
-            
-            var user = context.HttpContext.User.Identity.Name;
-
-            if (user != null)
-            {
-                var ipAddress = context.HttpContext.Connection.RemoteIpAddress.ToString();
-
-                SaveUserActivity(data, url, user, method, ipAddress);
-            }
-            
         }
 
         public void SaveUserActivity(string data, string url, string user, string method, string ipAddress)
