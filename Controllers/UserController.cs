@@ -43,7 +43,7 @@ namespace AuthProject.Controllers
             return View(userList);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
@@ -70,7 +70,7 @@ namespace AuthProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(AppUser user)
         {
             if (ModelState.IsValid)
@@ -103,7 +103,7 @@ namespace AuthProject.Controllers
             return View(user);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ChangePasswd(string userId) //TODO name refactor
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
@@ -130,7 +130,7 @@ namespace AuthProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangePasswd(AppUser changePasswdAdminViewModel)
         {
             if (!ModelState.IsValid)
@@ -149,7 +149,7 @@ namespace AuthProject.Controllers
             return View(changePasswdAdminViewModel);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> LockAccount(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
@@ -164,7 +164,7 @@ namespace AuthProject.Controllers
             return RedirectToAction("Index", "User");
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UnlockAccount(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
@@ -179,7 +179,7 @@ namespace AuthProject.Controllers
             return RedirectToAction("Index", "User");
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteAccount(string userId)
         {
             var user = _db.AppUser.FirstOrDefault(u => u.Id == userId);
@@ -194,13 +194,13 @@ namespace AuthProject.Controllers
             return RedirectToAction("Index", "User");
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public IActionResult TogglePasswordCheck()
         {
             return View();
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public IActionResult PasswordCheckOff()
         {
             TogglePasswordCheckViewModel.PasswordCheck = false;
@@ -209,7 +209,7 @@ namespace AuthProject.Controllers
             return RedirectToAction("TogglePasswordCheck", "User");
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public IActionResult PasswordCheckOn()
         {
             TogglePasswordCheckViewModel.PasswordCheck = true;

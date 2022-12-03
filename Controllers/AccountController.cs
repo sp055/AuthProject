@@ -80,20 +80,16 @@ namespace AuthProject.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Register(string? returnUrl = null)
         {
-            if (!await _roleManager.RoleExistsAsync("User"))
-            {
-                await _roleManager.CreateAsync(new IdentityRole("User"));
-                await _roleManager.CreateAsync(new IdentityRole("ADMIN"));
-            }
+
 
             List<SelectListItem> listItems = new List<SelectListItem>();
             listItems.Add(new SelectListItem()
             {
-                Value = "ADMIN",
-                Text = "ADMIN"
+                Value = "Admin",
+                Text = "Admin"
             });
             listItems.Add(new SelectListItem()
             {
@@ -107,7 +103,7 @@ namespace AuthProject.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel, string? returnUrl = null)
         {
             registerViewModel.ReturnUrl = returnUrl;
@@ -117,7 +113,8 @@ namespace AuthProject.Controllers
                 var user = new AppUser
                 {
                     Email = registerViewModel.Email, UserName = registerViewModel.UserName,
-                    LastPasswChange = DateTime.Now
+                    LastPasswChange = DateTime.Now,
+                    FirstLogin = true
                 };
                 
                 var result = await _userManager.CreateAsync(user, registerViewModel.Password);
@@ -125,9 +122,9 @@ namespace AuthProject.Controllers
                 if (result.Succeeded)
                 {
                     if (registerViewModel.RoleSelected != null && registerViewModel.RoleSelected.Length > 0 &&
-                        registerViewModel.RoleSelected == "ADMIN")
+                        registerViewModel.RoleSelected == "Admin")
                     {
-                        await _userManager.AddToRoleAsync(user, "ADMIN");
+                        await _userManager.AddToRoleAsync(user, "Admin");
                     }
                     else
                     {
@@ -147,7 +144,7 @@ namespace AuthProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMIN,User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
@@ -162,7 +159,7 @@ namespace AuthProject.Controllers
         // }
 
         [HttpGet]
-        [Authorize(Roles = "ADMIN,User")]
+        [Authorize(Roles = "Admin,User")]
         public IActionResult Edit()
         {
             return View();
@@ -170,7 +167,7 @@ namespace AuthProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMIN,User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Edit(EditViewModel editViewModel, string? returnUrl = null)
         {
             editViewModel.ReturnUrl = returnUrl;
@@ -189,16 +186,17 @@ namespace AuthProject.Controllers
                 var result = await _signInManager.CheckPasswordSignInAsync(user, editViewModel.OldPassword, false);
                 if (result.Succeeded)
                 {
-                    var updatedUser = new AppUser
-                    {
-                        RoleId = user.RoleId,
-                        Role = user.Role,
-                        RoleList = user.RoleList,
-                        FirstLogin = false,
-                        LastPasswChange = DateTime.Now
-                    };
+                    user.FirstLogin = false;
+                    user.LastPasswChange = DateTime.Now;
+                    //{
+                    //    //RoleId = user.RoleId,
+                    //    //Role = user.Role,
+                    //    //RoleList = user.RoleList,
+                       
+                        
+                    //};
 
-                    await _userManager.UpdateAsync(updatedUser);
+                    await _userManager.UpdateAsync(user);
                     _db.SaveChanges();
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);

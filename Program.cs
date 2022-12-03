@@ -1,4 +1,5 @@
 using AuthProject.Data;
+using AuthProject.Filters;
 using AuthProject.Models;
 using AuthProject.Models.Validaotrs;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(e =>
     e.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders().AddPasswordValidator<CustomPasswordValidator<AppUser>>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options => {
+    options.Filters.Add(typeof(UserFilterAttribute));
+});
 builder.Services.Configure<IdentityOptions>(opt =>
 {
     opt.Password.RequiredLength = 5;
@@ -20,6 +23,7 @@ builder.Services.Configure<IdentityOptions>(opt =>
     //opt.SignIn.RequireConfirmedAccount = true;
 });
 
+builder.Services.AddScoped<DbSeed>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,6 +32,13 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    var scope = app.Services.CreateScope();
+    var seeder = scope.ServiceProvider.GetRequiredService<DbSeed>();
+    seeder.AddUsers(app);
+    seeder.Seed();
 }
 
 app.UseHttpsRedirection();
