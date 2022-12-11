@@ -26,6 +26,22 @@
             </div>
 
             <div class="form-group">
+                <span>x: @Model.OTP | function: a*sin(x)</span>
+            </div>
+               <div class="form-group">
+                <label asp-for="OTPResult" class="col-md-2">Result:</label>
+                <div class="col-md-10">
+                    <input asp-for="OTPResult" class="form-control"/>
+                </div>
+            </div>
+
+            @*<asp:hiddenfield id="HiddenOTP"
+                             value="@Model.OTP"
+                             runat="server" />*@
+
+            <input hidden asp-for="OTP" />
+
+            <div class="form-group">
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-success form-control">Log in</button>
                 </div>
