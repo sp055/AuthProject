@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221203122019_methodactivity")]
-    partial class methodactivity
+    [Migration("20221211081634_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

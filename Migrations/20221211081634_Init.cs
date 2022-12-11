@@ -61,6 +61,7 @@ namespace AuthProject.Migrations
                     Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MethodType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ActivityDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

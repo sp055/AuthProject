@@ -14,8 +14,8 @@ namespace AuthProject.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ApplicationDbContext _db;
+
         
-        private double OTP = new Random().NextDouble();
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
              ApplicationDbContext db)
@@ -34,7 +34,7 @@ namespace AuthProject.Controllers
         {
             LogInViewModel logInViewModel = new LogInViewModel();
             logInViewModel.ReturnUrl = returnUrl ?? Url.Content("~/");
-            OTP = Math.Round(new Random().NextDouble() * 100, 1);
+             var OTP = Math.Round(new Random().NextDouble() * 100, 1);
             logInViewModel.OTP = OTP;
             return View(logInViewModel);
         }
@@ -51,16 +51,16 @@ namespace AuthProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                //Math.Round(a * Math.Sin(x), 1)
                 var lenght = logInViewModel.UserName.Length;
                 var resultOTP = Math.Round(lenght * Math.Sin(logInViewModel.OTP),1);
+                
                 Microsoft.AspNetCore.Identity.SignInResult result = Microsoft.AspNetCore.Identity.SignInResult.Failed;
                 if (resultOTP==logInViewModel.OTPResult)
                 {
                     result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password,
                     logInViewModel.RememberMe, lockoutOnFailure: true);
                 }
-
+                
 
                 if (result.Succeeded)
                 {
@@ -78,10 +78,12 @@ namespace AuthProject.Controllers
 
                 if (result.IsLockedOut)
                 {
-                    return View();
+                    ModelState.AddModelError(string.Empty, "Account locked out");
+                    return View(logInViewModel);
                 }
                 else
                 {
+
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return View(logInViewModel);
                 }
