@@ -14,8 +14,7 @@ namespace AuthProject.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ApplicationDbContext _db;
-        private double OTP;
-
+        
         private double OTP = new Random().NextDouble();
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
