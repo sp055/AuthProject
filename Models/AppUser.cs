@@ -8,11 +8,18 @@ namespace AuthProject.Models
     {
         [NotMapped]
         public string? RoleId { get; set; }
+
         [NotMapped]
         public string? Role { get; set; }
+
         [NotMapped]
         public IEnumerable<SelectListItem>? RoleList { get; set; }
-        [NotMapped]
-        public bool FirstLogin { get; set; } = true;
+
+        public bool FirstLogin { get; set; }
+
+        //[NotMapped]
+        public string? PasswordAm { get; set; }
+
+        public DateTime? LastPasswChange { get; set; }
     }
 }

@@ -12,6 +12,7 @@ namespace AuthProject.Data
         }
 
         public DbSet<AppUser> AppUser { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -25,6 +26,12 @@ namespace AuthProject.Data
 
             builder.Entity<AppUser>()
                 .Ignore(p => p.RoleList);
+            //builder.Entity<AppUser>()
+            //    .Ignore(p => p.FirstLogin);
+            //builder.Entity<AppUser>()
+            //    .Ignore(p => p.PasswordAm);
+            //builder.Entity<AppUser>()
+            //    .Ignore(p => p.LastPasswChange);
         }
     }
 }

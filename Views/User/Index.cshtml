@@ -1,11 +1,14 @@
 ﻿@model IEnumerable<AppUser>
-<br />
+<br/>
 <div class="row">
     <div class="col-6">
         <h2 class="text-primary">User List </h2>
     </div>
 </div>
 <div class="p-4 border rounded">
+
+       
+
     @if (Model.Count() > 0)
     {
         <table class="table table-striped border">
@@ -28,23 +31,27 @@
                         @item.Role
                     </td>
                     <td>
-                        @* <div class="text-center"> *@
-                        @*     <form asp-action="Delete" asp-route-userId="@item.Id"> *@
-                        @*         <a asp-action="Edit" asp-route-userId="@item.Id" class="btn btn-info text-white"> *@
-                        @*             Edit *@
-                        @*         </a> *@
-                        @* *@
-                        @*         <a asp-action="ManageClaims" asp-route-userId="@item.Id" class="btn btn-primary text-white">Claims</a> *@
-                        @* *@
-                        @*         <button type="submit" onclick="return confirm('Are you sure you want to delete this?')" *@
-                        @*         class="btn btn-danger"> *@
-                        @*             Delete *@
-                        @*         </button> *@
-                        @*     </form> *@
-                        @* </div> *@
+                        <div class="text-center">
+                            <a asp-action="Edit" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Edit</a>
+                            <a asp-action="ChangePasswd" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Change password</a>
+
+                            @if (item.LockoutEnd == null)
+                            {
+                                <a asp-action="LockAccount" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Lock</a>
+                            }
+                            else
+                            {
+                                <a asp-action="UnlockAccount" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Unlock</a>
+                            }
+
+                            <a asp-action="DeleteAccount" asp-controller="User" asp-route-userId="@item.Id" class="btn btn-info text-white">Delete</a>
+                        </div>
                     </td>
                 </tr>
             }
+
+            <a asp-controller="User" asp-action="TogglePasswordCheck" class="btn btn-info text-white mt-1 mb-1">TogglePasswordCheck</a>
+            <a asp-controller="Account" asp-action="UserActivity" class="btn btn-primary text-white mt-1 mb-1">Users activity</a>
         </table>
     }
 </div>

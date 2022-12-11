@@ -4,13 +4,13 @@
 
 namespace AuthProject.Migrations
 {
-    public partial class nicknameAdd : Migration
+    public partial class methodactivity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "NickName",
-                table: "AspNetUsers",
+                name: "MethodType",
+                table: "UserActivities",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
@@ -19,8 +19,8 @@ namespace AuthProject.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "NickName",
-                table: "AspNetUsers");
+                name: "MethodType",
+                table: "UserActivities");
         }
     }
 }
