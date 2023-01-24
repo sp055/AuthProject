@@ -59,7 +59,8 @@ namespace AuthProject.Filters
                             userName = userVM.UserName;
                             data = $@"[{{'UserName': {userName} }}]";
                             var userDB = _context.AppUser.FirstOrDefault(x => x.UserName == userName);
-                            userContext = userDB.UserName;
+                            if (userDB != null) userContext = userDB.UserName;
+                            userContext = userName;
                         }
                     }
                 }
