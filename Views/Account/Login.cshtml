@@ -3,12 +3,16 @@
 @using Microsoft.AspNetCore.Identity
 
 
-<script>
-    function calOPR() {     //TODO delete in production
-            const loginLength = document.getElementById("login").value.length;
-            console.log(Math.round((loginLength * Math.sin(@Model.OTP)) * 10) / 10);
-        }
-</script>
+
+
+
+<link href="~/css/site.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.rtl.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
 
 <h1 class="text-info">Log in</h1>
 <div class="row">
@@ -20,7 +24,7 @@
             <div class="form-group">
                 <label asp-for="UserName" class="col-md-2"></label>
                 <div class="col-md-10">
-                    <input asp-for="UserName" class="form-control" id="login"/>
+                    <input asp-for="UserName" class="form-control" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
             </div>
@@ -32,21 +36,29 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <span>x: @Model.OTP | function: a*sin(x)</span>
-            </div>
-               <div class="form-group">
-                <label asp-for="OTPResult" class="col-md-2">Result:</label>
-                <div class="col-md-10">
-                    <input asp-for="OTPResult" class="form-control"/>
-                </div>
+          
+
+      
+
+            <div class="input-group mb-3">
+                <dnt-captcha asp-captcha-generator-max="999999"
+                             asp-captcha-generator-min="111111"
+                             asp-captcha-generator-language="English"
+                             asp-captcha-generator-display-mode="ShowDigits"
+                             asp-use-relative-urls="true"
+                             asp-placeholder="Enter Captcha"
+                             asp-font-name="Tahoma"
+                             asp-font-size="20"
+                             asp-fore-color="#333333"
+                             asp-back-color="#ccc"
+                             asp-text-box-class="text-box form-control"
+                             asp-text-box-template="<span class='input-group-prepend'><span class='form-group-text'></span></span>{0}"
+                             asp-validation-error-message="Please enter the security code"
+                             asp-validation-message-class="text-danger"
+                             asp-refresh-button-class="fas fa-redo btn-sm"
+                             asp-use-noise="false" />
             </div>
 
-            @*<asp:hiddenfield id="HiddenOTP"
-                             value="@Model.OTP"
-                             runat="server" />*@
-
-            <input hidden asp-for="OTP" />
 
             <div class="form-group">
                 <div class="col-md-2">
@@ -59,3 +71,27 @@
         </form>
     </div>
 </div>
+
+<script src="~/js/site.js"></script>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+
+
+
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.esm.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.esm.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<script src="~/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>

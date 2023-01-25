@@ -2,10 +2,12 @@
 using AuthProject.Data;
 using AuthProject.Models;
 using AuthProject.ViewModels;
+using DNTCaptcha.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
 
 namespace AuthProject.Controllers
 {
@@ -14,15 +16,19 @@ namespace AuthProject.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ApplicationDbContext _db;
-        
+        private readonly IDNTCaptchaValidatorService _dNTCaptchaValidatorService;
+        private readonly DNTCaptchaOptions _dNTCaptchaOptions;
+
         private double OTP = new Random().NextDouble();
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-             ApplicationDbContext db)
+             ApplicationDbContext db, IDNTCaptchaValidatorService dNTCaptchaValidatorService, IOptions<DNTCaptchaOptions> dNTCaptchaOptions)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _db = db;
+            _dNTCaptchaValidatorService = dNTCaptchaValidatorService;
+            _dNTCaptchaOptions = dNTCaptchaOptions == null ? throw new ArgumentNullException(nameof(dNTCaptchaOptions)) : dNTCaptchaOptions.Value;
         }
         // public IActionResult Index()
         // {
@@ -34,8 +40,8 @@ namespace AuthProject.Controllers
         {
             LogInViewModel logInViewModel = new LogInViewModel();
             logInViewModel.ReturnUrl = returnUrl ?? Url.Content("~/");
-            OTP = Math.Round(new Random().NextDouble() * 100, 1);
-            logInViewModel.OTP = OTP;
+            //OTP = Math.Round(new Random().NextDouble() * 100, 1);
+            //logInViewModel.OTP = OTP;
             return View(logInViewModel);
         }
 
@@ -52,15 +58,26 @@ namespace AuthProject.Controllers
             if (ModelState.IsValid)
             {
                 //Math.Round(a * Math.Sin(x), 1)
-                var lenght = logInViewModel.UserName.Length;
-                var resultOTP = Math.Round(lenght * Math.Sin(logInViewModel.OTP),1);
+                //var lenght = logInViewModel.UserName.Length;
+                //var resultOTP = Math.Round(lenght * Math.Sin(logInViewModel.OTP),1);
                 Microsoft.AspNetCore.Identity.SignInResult result = Microsoft.AspNetCore.Identity.SignInResult.Failed;
-                if (resultOTP==logInViewModel.OTPResult)
+
+                if (_dNTCaptchaValidatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
                 {
+                   
                     result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password,
-                    logInViewModel.RememberMe, lockoutOnFailure: true);
+                logInViewModel.RememberMe, lockoutOnFailure: true);
+                }
+                else
+                {
+                    this.ModelState.AddModelError(_dNTCaptchaOptions.CaptchaComponent.CaptchaInputName, "Please enter code.");
                 }
 
+                //if (resultOTP==logInViewModel.OTPResult)
+                //{
+                //    result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password,
+                //    logInViewModel.RememberMe, lockoutOnFailure: true);
+                //}
 
                 if (result.Succeeded)
                 {
