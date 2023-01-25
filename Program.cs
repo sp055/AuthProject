@@ -31,7 +31,7 @@ builder.Services.Configure<IdentityOptions>(opt =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.Name = ".AspNetCore.Identity.Application";
-    options.ExpireTimeSpan = TimeSpan.FromSeconds(3);
+    options.ExpireTimeSpan = TimeSpan.FromSeconds(300);
     options.SlidingExpiration = true;
 });
 
