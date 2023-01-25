@@ -2,6 +2,12 @@
 @using AuthProject.ViewModels
 @using Microsoft.AspNetCore.Identity
 
+<link href="~/css/site.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.rtl.css" rel="stylesheet" />
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 
 @*<script>
     function calOPR() {     //TODO delete in production
@@ -15,19 +21,19 @@
     <div class="col-md-8">
         <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form">
             <h4>Use a local account to log in.</h4>
-            <hr/>
+            <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="UserName" class="col-md-2"></label>
                 <div class="col-md-10">
-                    <input asp-for="UserName" class="form-control" id="login"/>
+                    <input asp-for="UserName" class="form-control" id="login" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label asp-for="Password" class="col-md-2"></label>
                 <div class="col-md-10">
-                    <input asp-for="Password" class="form-control"/>
+                    <input asp-for="Password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
             </div>
@@ -35,18 +41,48 @@
             <div class="form-group">
                 <span>x: @Model.OTP | function: a*sin(x)</span>
             </div>
-               <div class="form-group">
+            <div class="form-group">
                 <label asp-for="OTPResult" class="col-md-2">Result:</label>
                 <div class="col-md-10">
-                    <input asp-for="OTPResult" class="form-control"/>
+                    <input asp-for="OTPResult" class="form-control" />
                 </div>
             </div>
 
             @*<asp:hiddenfield id="HiddenOTP"
-                             value="@Model.OTP"
-                             runat="server" />*@
+            value="@Model.OTP"
+            runat="server" />*@
 
             <input hidden asp-for="OTP" />
+
+
+            <div class="input-group mb-3">
+                <dnt-captcha asp-captcha-generator-max="999999"
+                             asp-captcha-generator-min="111111"
+                             asp-captcha-generator-language="English"
+                             asp-captcha-generator-display-mode="ShowDigits"
+                             asp-use-relative-urls="true"
+                             asp-placeholder="Enter Captcha"
+                             asp-font-name="Tahoma"
+                             asp-font-size="20"
+                             asp-fore-color="#333333"
+                             asp-back-color="#ccc"
+                             asp-text-box-class="text-box form-control"
+                             asp-text-box-template="<span class='input-group-prepend'><span class='form-group-text'></span></span>{0}"
+                             asp-validation-error-message="Please enter the security code"
+                             asp-validation-message-class="text-danger"
+                             asp-refresh-button-class="fas fa-redo btn-sm"
+                             asp-use-noise="false" />
+            </div>
+
+
+
+            
+
+
+
+
+
+
 
             <div class="form-group">
                 <div class="col-md-2">
@@ -59,3 +95,43 @@
         </form>
     </div>
 </div>
+
+
+<script src="~/js/site.js"></script>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+
+
+
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.esm.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.esm.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<script src="~/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

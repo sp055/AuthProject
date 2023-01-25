@@ -2,6 +2,7 @@ using AuthProject.Data;
 using AuthProject.Filters;
 using AuthProject.Models;
 using AuthProject.Models.Validaotrs;
+using DNTCaptcha.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,10 @@ builder.Services.AddControllersWithViews(options => {
     options.Filters.Add(typeof(UserFilterAttribute));
 });
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders().AddPasswordValidator<CustomPasswordValidator<AppUser>>();
+
+builder.Services.AddDNTCaptcha(options=>options.WithEncryptionKey("a").UseCookieStorageProvider().ShowThousandsSeparators(false));
+
+
 
 builder.Services.Configure<IdentityOptions>(opt =>
 {
