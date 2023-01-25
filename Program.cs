@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using AuthProject.Data;
 using AuthProject.Filters;
 using AuthProject.Models;
@@ -30,11 +31,13 @@ builder.Services.Configure<IdentityOptions>(opt =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.Name = ".AspNetCore.Identity.Application";
-    options.ExpireTimeSpan = TimeSpan.FromSeconds(300);
+    options.ExpireTimeSpan = TimeSpan.FromSeconds(3);
     options.SlidingExpiration = true;
 });
 
 builder.Services.AddScoped<DbSeed>();
+builder.Services.AddReCaptcha(builder.Configuration.GetSection("GoogleReCaptcha"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
+using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AuthProject.Controllers
 {
+    [ValidateReCaptcha]
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -102,7 +104,7 @@ namespace AuthProject.Controllers
             });
             return View(user);
         }
-
+        
         [Authorize(Roles = "Admin")]
         public IActionResult ChangePasswd(string userId) //TODO name refactor
         {
@@ -129,11 +131,10 @@ namespace AuthProject.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangePasswd(AppUser changePasswdAdminViewModel)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 return View(changePasswdAdminViewModel);
             }

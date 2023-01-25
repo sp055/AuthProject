@@ -1,4 +1,6 @@
 ﻿@model AppUser
+@using AspNetCore.ReCaptcha
+@Html.ReCaptcha()
 
 <form asp-controller="User" asp-action="ChangePasswd" method="post" role="form">
     <input asp-for="@Model.Id" hidden/>
