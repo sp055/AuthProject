@@ -251,5 +251,10 @@ namespace AuthProject.Controllers
 
             return View(uaVM);
         }
+
+        public IActionResult AdminPanel()
+        {
+            return View();
+        }
     }
 }
