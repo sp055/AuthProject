@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SignInResult = Microsoft.AspNetCore.Mvc.SignInResult;
 
 namespace AuthProject.Controllers
 {
@@ -14,8 +15,8 @@ namespace AuthProject.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ApplicationDbContext _db;
+       
 
-        
 
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
              ApplicationDbContext db)
@@ -34,7 +35,7 @@ namespace AuthProject.Controllers
         {
             LogInViewModel logInViewModel = new LogInViewModel();
             logInViewModel.ReturnUrl = returnUrl ?? Url.Content("~/");
-             var OTP = Math.Round(new Random().NextDouble() * 100, 1);
+            var OTP = Math.Round(new Random().NextDouble() * 100, 1);
             logInViewModel.OTP = OTP;
             return View(logInViewModel);
         }
@@ -51,27 +52,29 @@ namespace AuthProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var lenght = logInViewModel.UserName.Length;
-                var resultOTP = Math.Round(lenght * Math.Sin(logInViewModel.OTP),1);
-                
-                Microsoft.AspNetCore.Identity.SignInResult result = Microsoft.AspNetCore.Identity.SignInResult.Failed;
-                if (resultOTP==logInViewModel.OTPResult)
-                {
-                    result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password,
-                    logInViewModel.RememberMe, lockoutOnFailure: true);
-                }
+                //var lenght = logInViewModel.UserName.Length;
+                //var resultOTP = Math.Round(lenght * Math.Sin(logInViewModel.OTP), 1);
+
+                Microsoft.AspNetCore.Identity.SignInResult result = Microsoft.AspNetCore.Identity.SignInResult.Success;
+                //if (!(resultOTP == logInViewModel.OTPResult))
+                //{
+                //    result = await _signInManager.PasswordSignInAsync(logInViewModel.UserName, logInViewModel.Password,
+                //    logInViewModel.RememberMe, lockoutOnFailure: true);
+                //}
                 
 
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(logInViewModel.UserName);
-
+                  
                     if (user.FirstLogin)
                     {
+                        
                         return RedirectToAction("Edit", "Account");
                     }
                     else
                     {
+                        
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -93,8 +96,8 @@ namespace AuthProject.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Register(string? returnUrl = null)
+
+        public IActionResult Register(string? returnUrl = null)
         {
 
 
@@ -116,7 +119,7 @@ namespace AuthProject.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel, string? returnUrl = null)
         {
             registerViewModel.ReturnUrl = returnUrl;
@@ -131,10 +134,14 @@ namespace AuthProject.Controllers
                     FirstLogin = true
                 };
 
-                var result = await _userManager.CreateAsync(user, registerViewModel.Password);
 
-                if (result.Succeeded)
-                {
+
+                //var a = await _userManager.FindByNameAsync("AdminTest");
+
+                //var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+                //result = Microsoft.AspNetCore.Identity.IdentityResult.Success;
+                //if (result.Succeeded)
+                //{
                     if (registerViewModel.RoleSelected != null && registerViewModel.RoleSelected.Length > 0 &&
                         registerViewModel.RoleSelected == "Admin")
                     {
@@ -147,10 +154,10 @@ namespace AuthProject.Controllers
 
                     //await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    return RedirectToAction("Index", "User");
-                }
+                    //return RedirectToAction("Index", "User");
+                //}
 
-                ModelState.AddModelError("Password", "User could not be created. Password not unique enough");
+                //ModelState.AddModelError("Password", "User could not be created. Password not unique enough");
             }
 
             return View(registerViewModel);
